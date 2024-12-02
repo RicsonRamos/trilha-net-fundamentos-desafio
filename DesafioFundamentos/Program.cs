@@ -6,7 +6,7 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 decimal precoInicial = 0;
 decimal precoPorHora = 0;
 
-Console.WriteLine("Seja bem vindo ao sistema de estacionamento!\n" +
+Console.WriteLine("Seja bem-vindo ao sistema de estacionamento!\n" +
                   "Digite o preço inicial:");
 precoInicial = Convert.ToDecimal(Console.ReadLine());
 
@@ -29,7 +29,11 @@ while (exibirMenu)
     Console.WriteLine("3 - Listar veículos");
     Console.WriteLine("4 - Encerrar");
 
-    switch (Console.ReadLine())
+    string escolha = Console.ReadLine();
+
+    Console.Clear(); // Limpa o terminal logo após a seleção de uma opção
+
+    switch (escolha)
     {
         case "1":
             es.AdicionarVeiculo();
@@ -52,8 +56,12 @@ while (exibirMenu)
             break;
     }
 
-    Console.WriteLine("Pressione uma tecla para continuar");
-    Console.ReadLine();
+    if (exibirMenu) // Exibe a mensagem de pausa somente se o programa não for encerrado
+    {
+        Console.WriteLine("Pressione uma tecla para continuar...");
+        Console.ReadLine();
+    }
 }
 
-Console.WriteLine("O programa se encerrou");
+Console.Clear(); // Limpa o terminal ao encerrar o programa
+Console.WriteLine("O programa se encerrou.");
