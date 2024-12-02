@@ -20,12 +20,12 @@ namespace DesafioFundamentos.Models
 
         public void AdicionarVeiculo()
         {
-            Console.WriteLine("Informe a placa do veículo para estacionar (formato: ABC-1B23):");
+            Console.WriteLine("Informe a placa do veículo para estacionar (formatos aceitos: ABC1234 ou ABC1B23):");
             string placa = Console.ReadLine()?.Trim().ToUpper();
 
             if (string.IsNullOrEmpty(placa) || !ValidarPlaca(placa))
             {
-                Console.WriteLine("Placa inválida! Certifique-se de usar o formato correto (ex.: ABC-1B23).");
+                Console.WriteLine("Placa inválida! Certifique-se de usar um formato correto (ex.: ABC1234 ou ABC1B23).");
                 return;
             }
 
@@ -36,18 +36,19 @@ namespace DesafioFundamentos.Models
             else
             {
                 veiculos.Add(placa);
-                Console.WriteLine($"Veículo com placa {placa} foi estacionado com sucesso.");
+                string placaFormatada = FormatarPlaca(placa);
+                Console.WriteLine($"Veículo com placa {placaFormatada} foi estacionado com sucesso.");
             }
         }
 
         public void RemoverVeiculo()
         {
-            Console.WriteLine("Informe a placa do veículo que deseja remover (formato: ABC-1B23):");
+            Console.WriteLine("Informe a placa do veículo que deseja remover (formatos aceitos: ABC1234 ou ABC1B23):");
             string placa = Console.ReadLine()?.Trim().ToUpper();
 
             if (string.IsNullOrEmpty(placa) || !ValidarPlaca(placa))
             {
-                Console.WriteLine("Placa inválida! Certifique-se de usar o formato correto (ex.: ABC-1B23).");
+                Console.WriteLine("Placa inválida! Certifique-se de usar um formato correto (ex.: ABC1234 ou ABC1B23).");
                 return;
             }
 
@@ -57,7 +58,8 @@ namespace DesafioFundamentos.Models
                 if (int.TryParse(Console.ReadLine(), out int horas) && horas > 0)
                 {
                     decimal valorTotal = CalcularValor(horas);
-                    Console.WriteLine($"O veículo {placa} foi removido. Total a pagar: R$ {valorTotal:F2}");
+                    string placaFormatada = FormatarPlaca(placa);
+                    Console.WriteLine($"O veículo {placaFormatada} foi removido. Total a pagar: R$ {valorTotal:F2}");
                 }
                 else
                 {
@@ -81,14 +83,30 @@ namespace DesafioFundamentos.Models
             Console.WriteLine("Veículos estacionados:");
             foreach (var placa in veiculos)
             {
-                Console.WriteLine($"- {placa}");
+                Console.WriteLine($"- {FormatarPlaca(placa)}");
             }
         }
 
         private static bool ValidarPlaca(string placa)
         {
-            // Valida placas no formato ABC-1B23
-            return Regex.IsMatch(placa, @"^[A-Z]{3}-\d[A-Z\d]\d{2}$");
+            // Valida placas nos formatos ABC1234 e ABC1B23
+            return Regex.IsMatch(placa, @"^[A-Z]{3}\d{4}$") || Regex.IsMatch(placa, @"^[A-Z]{3}\d[A-Z]\d{2}$");
+        }
+
+        public static string FormatarPlaca(string placa)
+        {
+            if (Regex.IsMatch(placa, @"^[A-Z]{3}\d{4}$"))
+            {
+                // Formato ABC1234 -> ABC-1234
+                return placa.Insert(3, "-");
+            }
+            else if (Regex.IsMatch(placa, @"^[A-Z]{3}\d[A-Z]\d{2}$"))
+            {
+                // Formato ABC1B23 -> ABC-1B23
+                return placa.Insert(3, "-");
+            }
+
+            throw new ArgumentException("Placa em formato inválido.");
         }
 
         private decimal CalcularValor(int horas)
